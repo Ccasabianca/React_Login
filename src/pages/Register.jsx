@@ -19,30 +19,30 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch("https://offers-api.digistos.com/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const response = await fetch("https://offers-api.digistos.com/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        navigate("/connexion");
-      } else {
-        setErrorMessage(data.message || "Une erreur s'est produite.");
-      }
-    } catch (error) {
-      setErrorMessage("Erreur réseau : " + error.message);
+    if (response.ok) {
+      navigate("/connexion");
+    } else {
+      setErrorMessage(data.message || "Une erreur s'est produite.");
     }
-  };
+  } catch (error) {
+    console.error("Erreur lors de l'inscription :", error);
+    setErrorMessage("Erreur réseau : " + error.message);
+  }
+};
 
   return (
     <Container className="d-flex justify-content-center align-items-center min-vh-100">
