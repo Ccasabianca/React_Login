@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Button, Container, Card, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Card, Row, Col, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router";
 
 const Register = () => {
@@ -9,6 +9,7 @@ const Register = () => {
     password: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,31 +21,27 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     try {
       const response = await fetch("https://offers-api.digistos.com/api/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("Inscription réussie :", data);
-
-        navigate("/login");
+        navigate("/connexion");
       } else {
-        const errorData = await response.json();
-        alert("Erreur : " + (errorData.message || "Une erreur s'est produite"));
+        setErrorMessage(data.message || "Une erreur s'est produite.");
       }
     } catch (error) {
-      console.error("Erreur réseau :", error);
-      alert("Erreur réseau : " + error.message);
+      setErrorMessage("Erreur réseau : " + error.message);
     }
-    console.log("Form submitted:", formData);
   };
 
   return (
@@ -53,6 +50,13 @@ const Register = () => {
         <Col xs={12} sm={8} md={6} lg={4}>
           <Card className="p-4 shadow-lg">
             <h2 className="text-center mb-4">Créer un compte</h2>
+
+            {errorMessage && (
+              <Alert variant="danger">
+                {errorMessage}
+              </Alert>
+            )}
+
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formEmail">
                 <Form.Label>Email</Form.Label>
