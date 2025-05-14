@@ -25,26 +25,33 @@ const handleSubmit = async (e) => {
     const response = await fetch("https://offers-api.digistos.com/api/auth/login", {
       method: "POST",
       headers: {
-        "Accept" : "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      navigate("/offres/professionnelles");
-    } else {
-      setErrorMessage(data.message || "Une erreur s'est produite.");
+    if (!response.ok) {
+      const data = await response.json();
+      const err = new Error(
+        data.message || "Erreur lors de la connexion."
+      );
+      err.status = response.status;
+      throw err;
     }
+
+    navigate("/offres/professionnelles");
+
   } catch (error) {
     console.error("Erreur lors de la connexion :", error);
-    setErrorMessage("Erreur réseau : " + error.message);
+
+    if (error.status === 401) {
+      setErrorMessage("Identifiants incorrects. Veuillez réessayer.");
+    } else {
+      setErrorMessage(error.message);
+    }
   }
 };
-
 
   return (
     <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -58,7 +65,7 @@ const handleSubmit = async (e) => {
                 {errorMessage}
               </Alert>
             )}
-            
+
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="loginEmail">
                 <Form.Label>Email</Form.Label>
