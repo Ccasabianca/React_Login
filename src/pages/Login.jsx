@@ -48,7 +48,7 @@ const handleSubmit = async (e) => {
     if (error.status === 401) {
       setErrorMessage("Identifiants incorrects. Veuillez réessayer.");
     } else {
-      setErrorMessage(error.message);
+      setErrorMessage("Une erreur est survenue.");
     }
   }
 };
