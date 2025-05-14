@@ -26,6 +26,7 @@ const handleSubmit = async (e) => {
     const response = await fetch("https://offers-api.digistos.com/api/auth/register", {
       method: "POST",
       headers: {
+        "Accept" : "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
