@@ -10,7 +10,6 @@ const Logout = () => {
       await fetch("https://offers-api.digistos.com/api/auth/logout", {
         method: "POST",
         headers: {
-        "Accept": "application/json",
         Authorization: `Bearer ${token}`,
         },
       });
