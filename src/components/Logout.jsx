@@ -16,7 +16,6 @@ const Logout = () => {
       });
 
       localStorage.removeItem("auth");
-      window.dispatchEvent(new Event("authChanged"));
       navigate("/connexion");
     };
 

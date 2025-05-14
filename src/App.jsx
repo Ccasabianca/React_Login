@@ -7,7 +7,7 @@ import NotFound from "./pages/NotFound.jsx";
 import OfferProList from "./pages/OfferProList.jsx";
 import OfferPublicList from "./pages/OfferPublicList.jsx";
 import Offer from "./pages/Offer.jsx";
-import Logout from "./pages/Logout.jsx";
+import Logout from "./components/Logout.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 
 function App() {
@@ -17,8 +17,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/inscription" element={<Register />} />
         <Route path="/connexion" element={<Login />} />
-        <Route path="/deconnexion" element={<PrivateRoute><Logout /></PrivateRoute>} />
-        <Route path="/offres/professionnelles" element={<PrivateRoute><OfferProList /></PrivateRoute>} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/deconnexion" element={<Logout />} />
+          <Route path="/offres/professionnelles" element={<OfferProList />} />
+        </Route>
         <Route path="/offres/publiques" element={<OfferPublicList />} />
         <Route path="/offre/:id" element={<Offer />} />
         <Route path="*" element={<NotFound />} />

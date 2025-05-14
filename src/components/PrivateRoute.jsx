@@ -10,6 +10,7 @@ const PrivateRoute = () => {
     if (!isValid) {
       localStorage.removeItem("auth");
       navigate("/connexion");
+      return;
     }
   }, [navigate]);
 
