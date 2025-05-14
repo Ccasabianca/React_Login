@@ -31,14 +31,20 @@ const handleSubmit = async (e) => {
       body: JSON.stringify(formData),
     });
 
+     const data = await response.json();
+
     if (!response.ok) {
-      const data = await response.json();
       const err = new Error(
         data.message || "Erreur lors de la connexion."
       );
       err.status = response.status;
       throw err;
     }
+
+      localStorage.setItem("auth", JSON.stringify({
+      token: data.access_token,
+      expiresAt: new Date(Date.now() + data.expires_in * 3600).toISOString()
+    }));
 
     navigate("/offres/professionnelles");
 
