@@ -1,49 +1,55 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Spinner, Alert } from "react-bootstrap";
-import OfferList from "../components/OfferList.jsx";
+import OfferList from "../components/OfferList";
+import { useNavigate } from "react-router";
 
 const OfferProList = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = useSelector((state) => state.auth.token);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchOffers = async () => {
+      if (!token) {
+        setError("Vous devez être connecté pour accéder à ces offres.");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(
-          "https://offers-api.digistos.com/api/offers/pro",
-          {
-            headers: {
-              Accept: "application/json",
-              // Add Authorization token
-            },
-          }
-        );
+        const response = await fetch("https://offers-api.digistos.com/api/offers/pro", {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const { data: offers, message } = await response.json();
+
         if (!response.ok) {
-          throw { status: response.status, message: message };
+          throw new Error(message || "Erreur lors du chargement des offres.");
         }
 
         setOffers(offers);
       } catch (err) {
-        if (err.status === 401) {
-          setError("Vous n'êtes pas autorisé à accéder aux offres (401).");
-        } else {
-          setError("Une erreur est survenue lors du chargement des offres.");
-        }
+        setError("Une erreur est survenue lors du chargement des offres.");
         console.error(err.message || err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    fetchOffers();
+  }, [token]);
 
   if (loading) {
     return <Spinner animation="border" className="d-block mx-auto mt-5" />;
   }
+
   if (error) {
     return (
       <Alert variant="danger" className="mt-5 text-center">
