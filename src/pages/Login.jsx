@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Form, Button, Container, Card, Row, Col, Alert } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Container,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
 import { useNavigate } from "react-router";
 
 const LoginPage = () => {
@@ -18,40 +26,55 @@ const LoginPage = () => {
     });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch("https://offers-api.digistos.com/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      const err = new Error(
-        data.message || "Erreur lors de la connexion."
+    try {
+      const response = await fetch(
+        "https://offers-api.digistos.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+  password: formData.password,
+          }),
+          credentials: "include",
+        }
       );
-      err.status = response.status;
-      throw err;
+
+      if (!response.ok) {
+        const data = await response.json();
+        const err = new Error(data.message || "Erreur lors de la connexion.");
+        err.status = response.status;
+        throw err;
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({
+          expiresAt: new Date(
+            Date.now() + data.expires_in * 1000
+          ).toISOString(),
+        })
+      );
+
+      navigate("/offres/professionnelles");
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+
+      if (error.status === 401) {
+        setErrorMessage("Identifiants incorrects. Veuillez réessayer.");
+      } else {
+        setErrorMessage("Une erreur est survenue.");
+      }
     }
-
-    navigate("/offres/professionnelles");
-
-  } catch (error) {
-    console.error("Erreur lors de la connexion :", error);
-
-    if (error.status === 401) {
-      setErrorMessage("Identifiants incorrects. Veuillez réessayer.");
-    } else {
-      setErrorMessage("Une erreur est survenue.");
-    }
-  }
-};
+  };
 
   return (
     <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -60,11 +83,7 @@ const handleSubmit = async (e) => {
           <Card className="p-4 shadow-lg">
             <h2 className="text-center mb-4">Se connecter</h2>
 
-            {errorMessage && (
-              <Alert variant="danger">
-                {errorMessage}
-              </Alert>
-            )}
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="loginEmail">
