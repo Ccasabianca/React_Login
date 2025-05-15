@@ -2,23 +2,15 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Spinner, Alert } from "react-bootstrap";
 import OfferList from "../components/OfferList";
-import { useNavigate } from "react-router";
 
 const OfferProList = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = useSelector((state) => state.auth.token);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOffers = async () => {
-      if (!token) {
-        setError("Vous devez être connecté pour accéder à ces offres.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await fetch("https://offers-api.digistos.com/api/offers/pro", {
           method: "GET",
