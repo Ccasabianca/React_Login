@@ -27,7 +27,7 @@ const Offer = () => {
         const { data: offers, message } = await response.json();
         
         if (!response.ok) {
-          throw { status: response.status, message: data };
+          throw { status: response.status, message };
         }
 
         setOffer(offers);

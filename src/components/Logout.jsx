@@ -28,7 +28,7 @@ const Logout = () => {
     };
 
     handleLogout();
-  }, [dispatch, navigate]);
+  });
 
   return null;
 };
